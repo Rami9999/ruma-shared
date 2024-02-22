@@ -16,7 +16,6 @@ jobs:
       - uses: actions/setup-node@v4
         with:
           node-version: '20.x'
-          repo-token: ${{ secrets.GITHUB_TOKEN }}
       - run: npm install
       - run: npm run build
       - run: |
@@ -24,3 +23,5 @@ jobs:
           echo '//npm.pkg.github.com/:_authToken="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"' >> build/.npmrc
       - run: npm publish
         working-directory: ./build
+        env:
+          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
