@@ -4,16 +4,28 @@ on:
     branches: [main]
   pull_request:
     branches: [main]
-
 jobs:
-  publish:
+  build:
     runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
+        with:
+          node-version: '20.x'
+      - run: npm ci
+      - run: npm test
+
+  publish-gpr:
+    runs-on: ubuntu-latest
+    needs: build
+    env:
+      NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
     permissions:
       contents: read
       packages: write
     steps:
-      - uses: actions/checkout@v4
-      - uses: actions/setup-node@v4
+      - uses: actions/checkout@v3
+      - uses: actions/setup-node@v3
         with:
           node-version: '20.x'
       - run: npm install
@@ -23,5 +35,3 @@ jobs:
           echo '//npm.pkg.github.com/:_authToken="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"' >> build/.npmrc
       - run: npm publish
         working-directory: ./build
-        env:
-          NODE_AUTH_TOKEN: ${{secrets.GITHUB_TOKEN}}
